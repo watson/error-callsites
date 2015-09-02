@@ -1,0 +1,37 @@
+{
+  "name": "error-callsites",
+  "version": "0.0.0",
+  "description": "Extract callsite objects from Error objects",
+  "main": "index.js",
+  "scripts": {
+    "test": "standard && tape test.js"
+  },
+  "keywords": [
+    "v8",
+    "error",
+    "errors",
+    "stack",
+    "stacktrace",
+    "stacktraces",
+    "callsite",
+    "callsites",
+    "stackframe",
+    "stackframes",
+    "frames"
+  ],
+  "author": "Thomas Watson Steen <w@tson.dk> (https://twitter.com/wa7son)",
+  "license": "MIT",
+  "dependencies": {},
+  "devDependencies": {
+    "standard": "^5.1.1",
+    "tape": "^4.2.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/watson/error-callsites.git"
+  },
+  "bugs": {
+    "url": "https://github.com/watson/error-callsites/issues"
+  },
+  "homepage": "https://github.com/watson/error-callsites#readme"
+}
