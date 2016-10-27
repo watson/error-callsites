@@ -1,6 +1,6 @@
 {
   "name": "error-callsites",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Extract callsite objects from Error objects",
   "main": "index.js",
   "scripts": {
@@ -35,7 +35,7 @@
   },
   "homepage": "https://github.com/watson/error-callsites#readme",
   "coordinates": [
-    55.6665714,
-    12.5797683
+    55.6809551,
+    12.5643655
   ]
 }
