@@ -27,3 +27,12 @@ test('error should have stack string', function (t) {
   t.equal(err.stack.split('\n')[0], 'Error: foo')
   t.end()
 })
+
+test('process same error twice', function (t) {
+  var err = new Error('foo')
+  callsites(err)
+  callsites(err)
+  t.equal(typeof err.stack, 'string')
+  t.ok(Array.isArray(err.__error_callsites))
+  t.end()
+})
