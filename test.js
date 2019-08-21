@@ -45,3 +45,31 @@ test('run deprecated function', function (t) {
   util.deprecate(function () {}, 'foo')()
   t.end()
 })
+
+test('overwrite Error.prepareStackTrace', function (t) {
+  Error.prepareStackTrace = () => 'boom!'
+  const err = new Error('foo')
+  t.equal(err.stack, 'boom!')
+  t.ok(Array.isArray(err.__error_callsites))
+  t.end()
+})
+
+test('re-set Error.prepareStackTrace', function (t) {
+  const orig = Error.prepareStackTrace
+  Error.prepareStackTrace = () => 'boom!'
+
+  const e1 = {}
+  Error.captureStackTrace(e1)
+  t.equal(e1.stack, 'boom!')
+  t.ok(Array.isArray(e1.__error_callsites))
+
+  Error.prepareStackTrace = orig
+
+  const e2 = {}
+  Error.captureStackTrace(e2)
+  t.notEqual(e2.stack, 'boom!')
+  t.equal(typeof e2.stack, 'string')
+  t.ok(Array.isArray(e2.__error_callsites))
+
+  t.end()
+})

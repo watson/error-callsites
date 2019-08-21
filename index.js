@@ -1,8 +1,8 @@
 'use strict'
 
-const formatter = require('./lib/node-0.10-formatter')
+const fallback = Error.prepareStackTrace || require('./lib/node-0.10-formatter')
 
-let lastPrepareStackTrace = Error.prepareStackTrace
+let lastPrepareStackTrace = fallback
 
 Object.defineProperty(Error, 'prepareStackTrace', {
   configurable: true,
@@ -11,7 +11,11 @@ Object.defineProperty(Error, 'prepareStackTrace', {
     return prepareStackTrace
   },
   set: function (fn) {
-    lastPrepareStackTrace = fn
+    // Don't set `lastPrepareStackTrace` to ourselves. If we did, we'd end up
+    // throwing a RangeError (Maximum call stack size exceeded).
+    lastPrepareStackTrace = fn === prepareStackTrace
+      ? fallback
+      : fn
   }
 })
 
@@ -27,5 +31,5 @@ function prepareStackTrace (err, callsites) {
     writable: false,
     value: callsites
   })
-  return (lastPrepareStackTrace || formatter)(err, callsites)
+  return lastPrepareStackTrace(err, callsites)
 }
