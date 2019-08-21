@@ -16,7 +16,7 @@ Object.defineProperty(Error, 'prepareStackTrace', {
 })
 
 module.exports = function (err) {
-  err.stack
+  err.stack // eslint-disable-line no-unused-expressions
   return err.__error_callsites
 }
 
