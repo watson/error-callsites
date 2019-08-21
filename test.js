@@ -1,20 +1,20 @@
 'use strict'
 
-var util = require('util')
-var test = require('tape')
-var callsites = require('./')
+const util = require('util')
+const test = require('tape')
+const callsites = require('./')
 
 test('return non-empty array', function (t) {
-  var err = new Error('foo')
-  var arr = callsites(err)
+  const err = new Error('foo')
+  const arr = callsites(err)
   t.ok(Array.isArray(arr))
   t.ok(arr.length > 0)
   t.end()
 })
 
 test('return array of callsites', function (t) {
-  var err = new Error('foo')
-  var arr = callsites(err)
+  const err = new Error('foo')
+  const arr = callsites(err)
   t.equal(typeof arr[0], 'object')
   t.equal(typeof arr[0].getFileName, 'function')
   t.equal(arr[0].getFileName(), __filename)
@@ -22,7 +22,7 @@ test('return array of callsites', function (t) {
 })
 
 test('error should have stack string', function (t) {
-  var err = new Error('foo')
+  const err = new Error('foo')
   callsites(err)
   t.equal(typeof err.stack, 'string')
   t.equal(err.stack.split('\n')[0], 'Error: foo')
@@ -30,7 +30,7 @@ test('error should have stack string', function (t) {
 })
 
 test('process same error twice', function (t) {
-  var err = new Error('foo')
+  const err = new Error('foo')
   callsites(err)
   callsites(err)
   t.equal(typeof err.stack, 'string')
