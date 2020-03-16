@@ -1,5 +1,6 @@
 'use strict'
 
+const { EOL } = require('os')
 const util = require('util')
 const test = require('tape')
 const callsites = require('./')
@@ -72,5 +73,37 @@ test('re-set Error.prepareStackTrace', function (t) {
   t.equal(typeof e2.stack, 'string')
   t.ok(Array.isArray(e2[callsitesSym]))
 
+  t.end()
+})
+
+// Test that we don't get into an infinite loop in case someone else overwrites
+// `Error.prepareStackTrace` while at the same time calling the original value
+// of `Error.prepareStackTrace`. This is a problem with, amongst others, the
+// stackback module.
+test('break infinite loop', function (t) {
+  let calls = 0
+  const orig = Error.prepareStackTrace
+
+  Error.prepareStackTrace = function (err, callsites) {
+    t.equal(++calls, 1, 'should only call the overwritten Error.prepareStackTrace once')
+    t.ok(Array.isArray(err[callsitesSym]), 'should have set callsite symbol when calling overwritten Error.prepareStackTrace')
+
+    err.foo = 42
+
+    return orig(err, callsites)
+  }
+
+  const err = new Error('foo')
+  const stack = err.stack.split(EOL)
+  const message = stack.shift()
+
+  Error.prepareStackTrace = orig
+
+  t.equal(err.foo, 42, 'should retain modifications made by overwritten Error.prepareStackTrace')
+  t.ok(stack.length >= 3, 'should have a normal stack trace sting with at least two frames')
+  t.equal(message, 'Error: foo')
+  for (let i = 0; i < stack.length; i++) {
+    t.equal(stack[i].indexOf('    at '), 0)
+  }
   t.end()
 })

@@ -26,11 +26,19 @@ module.exports = function (err) {
 }
 
 function prepareStackTrace (err, callsites) {
+  // If the symbol has already been set it must mean that someone else has also
+  // overwritten `Error.prepareStackTrace` and retains a reference to this
+  // function that it's calling every time it's own `prepareStackTrace`
+  // function is being called. This would create an infinite loop if not
+  // handled.
+  if (Object.prototype.hasOwnProperty.call(err, callsitesSym)) return fallback(err, callsites)
+
   Object.defineProperty(err, callsitesSym, {
     enumerable: false,
     configurable: true,
     writable: false,
     value: callsites
   })
+
   return lastPrepareStackTrace(err, callsites)
 }
