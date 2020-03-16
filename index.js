@@ -1,5 +1,6 @@
 'use strict'
 
+const { callsitesSym } = require('./lib/internal/symbols')
 const fallback = Error.prepareStackTrace || require('./lib/node-0.10-formatter')
 
 let lastPrepareStackTrace = fallback
@@ -21,11 +22,11 @@ Object.defineProperty(Error, 'prepareStackTrace', {
 
 module.exports = function (err) {
   err.stack // eslint-disable-line no-unused-expressions
-  return err.__error_callsites
+  return err[callsitesSym]
 }
 
 function prepareStackTrace (err, callsites) {
-  Object.defineProperty(err, '__error_callsites', {
+  Object.defineProperty(err, callsitesSym, {
     enumerable: false,
     configurable: true,
     writable: false,

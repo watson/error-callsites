@@ -3,6 +3,7 @@
 const util = require('util')
 const test = require('tape')
 const callsites = require('./')
+const { callsitesSym } = require('./lib/internal/symbols')
 
 test('return non-empty array', function (t) {
   const err = new Error('foo')
@@ -34,12 +35,12 @@ test('process same error twice', function (t) {
   callsites(err)
   callsites(err)
   t.equal(typeof err.stack, 'string')
-  t.ok(Array.isArray(err.__error_callsites))
+  t.ok(Array.isArray(err[callsitesSym]))
   t.end()
 })
 
 // In Node.js v7 this used to throw when using this module because it emits a
-// deprecation warning when trying to re-define the __error_callsites property.
+// deprecation warning when trying to re-define the callsites symbol property.
 // By defining that property as configurable this error goes away.
 test('run deprecated function', function (t) {
   util.deprecate(function () {}, 'foo')()
@@ -50,7 +51,7 @@ test('overwrite Error.prepareStackTrace', function (t) {
   Error.prepareStackTrace = () => 'boom!'
   const err = new Error('foo')
   t.equal(err.stack, 'boom!')
-  t.ok(Array.isArray(err.__error_callsites))
+  t.ok(Array.isArray(err[callsitesSym]))
   t.end()
 })
 
@@ -61,7 +62,7 @@ test('re-set Error.prepareStackTrace', function (t) {
   const e1 = {}
   Error.captureStackTrace(e1)
   t.equal(e1.stack, 'boom!')
-  t.ok(Array.isArray(e1.__error_callsites))
+  t.ok(Array.isArray(e1[callsitesSym]))
 
   Error.prepareStackTrace = orig
 
@@ -69,7 +70,7 @@ test('re-set Error.prepareStackTrace', function (t) {
   Error.captureStackTrace(e2)
   t.notEqual(e2.stack, 'boom!')
   t.equal(typeof e2.stack, 'string')
-  t.ok(Array.isArray(e2.__error_callsites))
+  t.ok(Array.isArray(e2[callsitesSym]))
 
   t.end()
 })
