@@ -40,5 +40,5 @@ function prepareStackTrace (err, callsites) {
     value: callsites
   })
 
-  return lastPrepareStackTrace(err, callsites)
+  return lastPrepareStackTrace && lastPrepareStackTrace(err, callsites)
 }
