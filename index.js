@@ -15,11 +15,15 @@ Object.defineProperty(Error, 'prepareStackTrace', {
     return csPrepareStackTrace
   },
   set: function (fn) {
-    // Don't set `lastPrepareStackTrace` to ourselves. If we did, we'd end up
-    // throwing a RangeError (Maximum call stack size exceeded).
-    lastPrepareStackTrace = fn === csPrepareStackTrace
-      ? fallback
-      : fn
+    // 1. Don't set `lastPrepareStackTrace` to ourselves. If we did, we'd end up
+    //    throwing a RangeError (Maximum call stack size exceeded).
+    // 2. Setting to `undefined` is a signal to use the JS engine's built-in
+    //    formatter -- which we emulate with 'node-0.10-formatter'.
+    if (fn === csPrepareStackTrace || fn === undefined) {
+      lastPrepareStackTrace = fallback
+    } else {
+      lastPrepareStackTrace = fn
+    }
   }
 })
 
@@ -34,7 +38,9 @@ function csPrepareStackTrace (err, callsites) {
   // function that it's calling every time it's own `prepareStackTrace`
   // function is being called. This would create an infinite loop if not
   // handled.
-  if (Object.prototype.hasOwnProperty.call(err, callsitesSym)) return fallback(err, callsites)
+  if (Object.prototype.hasOwnProperty.call(err, callsitesSym)) {
+    return fallback(err, callsites)
+  }
 
   Object.defineProperty(err, callsitesSym, {
     enumerable: false,
