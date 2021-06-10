@@ -19,28 +19,34 @@ npm install error-callsites
 var callsites = require('error-callsites')
 
 var err = new Error('foo')
-var stack = callsites(err)
+var frames = callsites(err)
 
-console.log('Error occurred on line', stack[0].getLineNumber())
+console.log('Error occurred on line', frames[0].getLineNumber())
 ```
 
 ## API
 
 The module exposes a single function which expects an `Error` object as
-the first arguemnt:
+the first argument:
 
 ```js
-var arr = callsites(err)
+var frames = callsites(err)
 ```
 
-The function returns an array of callsite objects - one for each frame
-in the stack trace.
+More specifically, it expects an object on which `Error.captureStackTrace(obj)`
+has been called, which is the case for `Error` objects. You can do it directly
+yourself:
 
-### Callsite object
+```js
+var obj = {}
+Error.captureStackTrace(obj)
+var frames = callsites(err)
+```
 
-Each element in the returned array is a [V8 callsite
-object](https://code.google.com/p/v8-wiki/wiki/JavaScriptStackTraceApi#Customizing_stack_traces)
-and in turn reponds to the following V8 functions:
+The function returns an array of
+[v8 `CallSite` objects](https://v8.dev/docs/stack-trace-api#customizing-stack-traces)
+-- one for each frame in the stack trace. CallSite objects provide accessor
+methods for information on that frame. For example:
 
 - `callsite.getThis()` - returns the value of this
 - `callsite.getTypeName()` - returns the type of this as a string. This is the name of the function stored in the constructor field of this, if available, otherwise the object's [[Class]] internal property.
@@ -55,6 +61,18 @@ and in turn reponds to the following V8 functions:
 - `callsite.isEval()` - does this call take place in code defined by a call to eval?
 - `callsite.isNative()` - is this call in native V8 code?
 - `callsite.isConstructor()` - is this a constructor call?
+
+See the link above for a complete list of the accessor methods. Some have been
+added in more recent versions of v8 and Node.js.
+
+
+## How it works
+
+This package works by setting a [custom `Error.prepareStackTrace`](https://v8.dev/docs/stack-trace-api#customizing-stack-traces)
+property that transparently captures the structured stack trace that v8 passes
+to this API, while also supporting other Node.js code in the process setting
+its own `Error.prepareStackTrace`.
+
 
 ## License
 
