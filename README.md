@@ -4,7 +4,7 @@ Yet another module for extracting callsites (a.k.a. stack-frames) from
 Node.js `Error` objects.
 
 [![npm](https://img.shields.io/npm/v/error-callsites.svg)](https://www.npmjs.com/package/error-callsites)
-[![Build status](https://travis-ci.org/watson/error-callsites.svg?branch=master)](https://travis-ci.org/watson/error-callsites)
+[![Tests](https://github.com/watson/error-callsites/workflows/Tests/badge.svg)](https://github.com/watson/error-callsites/actions)
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://github.com/feross/standard)
 
 ## Installation
