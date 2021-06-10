@@ -107,3 +107,33 @@ test('break infinite loop', function (t) {
   }
   t.end()
 })
+
+// Setting `Error.prepareStackTrace = undefined` is a way to signal that you
+// want to JS engine's default stack trace string generation. In earlier
+// versions of this package, this blew up.
+test('support Error.prepareStackTrace=undefined', function (t) {
+  var previousPrepareStackTrace = Error.prepareStackTrace
+  Error.prepareStackTrace = undefined
+
+  let cs
+  let message
+  let stack
+  try {
+    throw new Error('boom with undefined Error.prepareStackTrace')
+  } catch (err) {
+    stack = err.stack.split(EOL)
+    message = stack.shift()
+    cs = callsites(err)
+  } finally {
+    Error.prepareStackTrace = previousPrepareStackTrace
+  }
+
+  t.ok(Array.isArray(cs), 'got callsites array')
+  t.equal(typeof cs[0].getFileName, 'function')
+  t.ok(stack.length >= 3, 'should have a normal stack trace sting with at least two frames')
+  t.equal(message, 'Error: boom with undefined Error.prepareStackTrace')
+  for (let i = 0; i < stack.length; i++) {
+    t.equal(stack[i].indexOf('    at '), 0)
+  }
+  t.end()
+})
