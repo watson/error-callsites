@@ -26,6 +26,9 @@
     "standard": "^14.3.3",
     "tape": "^4.13.2"
   },
+  "engines": {
+    "node": ">=6.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/watson/error-callsites.git"
@@ -33,9 +36,5 @@
   "bugs": {
     "url": "https://github.com/watson/error-callsites/issues"
   },
-  "homepage": "https://github.com/watson/error-callsites#readme",
-  "coordinates": [
-    56.043858,
-    12.609189
-  ]
+  "homepage": "https://github.com/watson/error-callsites#readme"
 }
