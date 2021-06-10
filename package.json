@@ -3,6 +3,9 @@
   "version": "2.0.3",
   "description": "Extract callsite objects from Error objects",
   "main": "index.js",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "test": "standard && tape test.js"
   },
