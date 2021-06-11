@@ -1,6 +1,6 @@
 # error-callsites Changelog
 
-## Unreleased
+## 2.0.4
 
 - Fix a crash when a user set `Error.prepareStackTrace = undefined`, which
   is a way of saying "give me the JS engine's default stack formatting".
